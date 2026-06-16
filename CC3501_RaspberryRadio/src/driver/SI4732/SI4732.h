@@ -1,6 +1,8 @@
 /**
  * @file SI4732.h
  * @brief SI4732 receiver driver API for Raspberry Pi Pico SDK.
+ * @author Helium
+ * @date 2026/6/13
  */
 
 #ifndef _SI4732_H_
