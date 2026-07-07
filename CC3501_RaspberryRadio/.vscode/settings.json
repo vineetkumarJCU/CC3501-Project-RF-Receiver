@@ -42,5 +42,13 @@
     "raspberry-pi-pico.cmakeAutoConfigure": true,
     "raspberry-pi-pico.useCmakeTools": false,
     "raspberry-pi-pico.cmakePath": "${HOME}/.pico-sdk/cmake/v3.31.5/bin/cmake",
-    "raspberry-pi-pico.ninjaPath": "${HOME}/.pico-sdk/ninja/v1.12.1/ninja"
+    "raspberry-pi-pico.ninjaPath": "${HOME}/.pico-sdk/ninja/v1.12.1/ninja",
+    "fosfori.pipeline.bloom.intensity": 0.5,
+    "fosfori.pipeline.scanline.intensity": 0.12,
+    "fosfori.pipeline.scanline.size": 2,
+    "fosfori.pipeline.noise.intensity": 0.03,
+    "fosfori.pipeline.curvature.amount": 0.25,
+    "fosfori.theme": "default",
+    "fosfori.pipeline.composite.phosphorTint": "",
+    "fosfori.pipeline.composite.glowColor": ""
 }

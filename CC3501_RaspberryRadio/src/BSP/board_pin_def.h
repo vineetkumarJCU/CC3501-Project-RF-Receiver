@@ -41,7 +41,7 @@
 #define SD_CARD_SPI0_CS_PIN           17 // GPIO17  //Fn: SPI  //Dir: Output
 
 /* SD card detection pin */
-#define SD_CARD_DETECT_PIN            21 // GPIO21  //Fn: GPIO  //Dir: Input
+#define SD_CARD_DETECT_PIN            5 // GPIO5  //Fn: GPIO  //Dir: Input
 
 /* GPS module (ATK-NEO-6M) power up control pin */
 #define GPS_POWER_UP_PIN              22 // GPIO22  //Fn: GPIO  //Dir: Output
@@ -59,7 +59,7 @@
 
 /* Audio jack plug detection pin */
 #define AUDIO_JACK_DETECT_PIN         27 // GPIO27  //Fn: ADC  //Dir: Input
-#define AUDIO_JACK_DETECT_PIN      1
+#define AUDIO_JACK_DETECT_PIN         1
 
 /* User uart */
 #define USER_UART_TX_PIN              28 // GPIO28  //Fn: UART  //Dir: Output
