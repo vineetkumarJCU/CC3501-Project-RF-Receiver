@@ -35,7 +35,10 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(CC3501_RaspberryRadio CC3501_RaspberryRadio.c )
+add_executable(CC3501_RaspberryRadio 
+${CMAKE_CURRENT_LIST_DIR}/src/driver/NS4160/NS4160.c
+${CMAKE_CURRENT_LIST_DIR}/src/peripheral/adc/RP2040_adc.c
+${CMAKE_CURRENT_LIST_DIR}/src/main/main.c)  
 
 pico_set_program_name(CC3501_RaspberryRadio "CC3501_RaspberryRadio")
 pico_set_program_version(CC3501_RaspberryRadio "0.1")
@@ -46,11 +49,14 @@ pico_enable_stdio_usb(CC3501_RaspberryRadio 1)
 
 # Add the standard library to the build
 target_link_libraries(CC3501_RaspberryRadio
-        pico_stdlib)
+        pico_stdlib
+        hardware_gpio
+        hardware_adc)
 
 # Add the standard include files to the build
 target_include_directories(CC3501_RaspberryRadio PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
+        ${CMAKE_CURRENT_LIST_DIR}/src/BSP
 )
 
 pico_add_extra_outputs(CC3501_RaspberryRadio)

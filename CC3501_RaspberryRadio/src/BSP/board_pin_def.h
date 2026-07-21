@@ -59,7 +59,7 @@
 
 /* Audio jack plug detection pin */
 #define AUDIO_JACK_DETECT_PIN         27 // GPIO27  //Fn: ADC  //Dir: Input
-#define AUDIO_JACK_DETECT_PIN         1
+#define AUDIO_JACK_DETECT_ADC_CH      1
 
 /* User uart */
 #define USER_UART_TX_PIN              28 // GPIO28  //Fn: UART  //Dir: Output
