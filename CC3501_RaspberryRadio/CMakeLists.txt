@@ -38,7 +38,9 @@ pico_sdk_init()
 add_executable(CC3501_RaspberryRadio 
 ${CMAKE_CURRENT_LIST_DIR}/src/driver/NS4160/NS4160.c
 ${CMAKE_CURRENT_LIST_DIR}/src/peripheral/adc/RP2040_adc.c
-${CMAKE_CURRENT_LIST_DIR}/src/main/main.c)  
+${CMAKE_CURRENT_LIST_DIR}/src/main/main.c
+${CMAKE_CURRENT_LIST_DIR}/src/driver/GPS_module/GPS_nmea_parser.c
+${CMAKE_CURRENT_LIST_DIR}/src/driver/GPS_module/GPS_module.c)
 
 pico_set_program_name(CC3501_RaspberryRadio "CC3501_RaspberryRadio")
 pico_set_program_version(CC3501_RaspberryRadio "0.1")
@@ -51,12 +53,32 @@ pico_enable_stdio_usb(CC3501_RaspberryRadio 1)
 target_link_libraries(CC3501_RaspberryRadio
         pico_stdlib
         hardware_gpio
-        hardware_adc)
+        hardware_adc
+        pico_stdlib
+        hardware_spi
+        hardware_i2c
+        hardware_dma
+        hardware_pio
+        hardware_interp
+        hardware_timer
+        hardware_watchdog
+        hardware_clocks
+        hardware_pll
+        hardware_uart
+        hardware_gpio
+        hardware_vreg
+        hardware_pwm
+        hardware_adc
+        hardware_irq
+        )
 
 # Add the standard include files to the build
 target_include_directories(CC3501_RaspberryRadio PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
         ${CMAKE_CURRENT_LIST_DIR}/src/BSP
+        ${CMAKE_CURRENT_LIST_DIR}/src/peripheral/adc
+        ${CMAKE_CURRENT_LIST_DIR}/src/driver/NS4160
+        ${CMAKE_CURRENT_LIST_DIR}/src/driver/GPS_module
 )
 
 pico_add_extra_outputs(CC3501_RaspberryRadio)
