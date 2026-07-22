@@ -12,7 +12,7 @@ static void ST7789_TX_DATA16(uint16_t dat)
 	uint8_t DATA[2]={dat>>8,dat&0xff};
 	ST7789_Write_DC(1);//write data
 	// HAL_SPI_Transmit(&ST7789_SPI_HEADER,DATA,2,1000);
-  spi_write_blocking(ST7789_SPI_HEADER,&DATA,2);
+  spi_write_blocking(ST7789_SPI_HEADER, DATA, 2);
 
 }
 static void ST7789_TX_CMD(uint8_t dat)

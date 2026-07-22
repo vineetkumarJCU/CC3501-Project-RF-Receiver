@@ -4,7 +4,11 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include "bsp_board.h"
+#include "board_pin_def.h"
+
+/* The audio ADC input is the board's GPIO26 / ADC0 input. */
+#define MICROPHONE_GPIO_PIN BATTERY_MONITOR_PIN
+#define MICROPHONE_ADC_INPUT_PIN (MICROPHONE_GPIO_PIN - 26u)
 
 #define ADC_DMA_CAPTURE_SAMPLE_COUNT 1024U
 #define ADC_DMA_CAPTURE_SAMPLE_RATE_HZ 44100U
