@@ -1,0 +1,10 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/MCU_development/Raspberry_Pi/CC3501_group_prj/CC3501-Project-RF-Receiver/CC3501_RaspberryRadio/build_make/pico-sdk/src/rp2040/boot_stage2/bs2_default_padded_checksummed.S
+

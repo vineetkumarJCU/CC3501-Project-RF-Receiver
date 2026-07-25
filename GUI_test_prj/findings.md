@@ -1,0 +1,44 @@
+# Findings
+
+- Workspace was initially empty and is on Git branch `main` tracking `origin/main`.
+- Available native build tools: CMake 3.28.1, Ninja, and MinGW-w64 GCC; MSVC `cl.exe` is not currently on `PATH`.
+- LVGL 9.5 officially includes an SDL2 display/input driver. The required configuration is `LV_USE_SDL=1`, and the standard SDL tick callback is `SDL_GetTicks`.
+- LVGL demos are built from the repository's `demos` directory and enabled with `LV_BUILD_DEMOS`.
+- Confirmed the installed GCC target is `x86_64-w64-mingw32`.
+- Vendored full source trees: LVGL commit `85aa60d` (`v9.5.0`) and SDL commit `5d24957` (`release-2.32.10`). Nested Git metadata was removed so the outer repository tracks normal files.
+- CMake configuration detects the target as Windows x64 and builds SDL2 statically; LVGL confirms the custom `lv_conf.h`, internal ThorVG, and demo source targets.
+- The first Release build compiled 941 steps successfully and linked `build/bin/lvgl_widgets_demo.exe`.
+- Final executable is 3,681,444 bytes and imports only standard Windows system DLLs; it does not require a separate `SDL2.dll`, `libgcc`, or `libstdc++` DLL.
+- Runtime smoke test passed: process stayed alive, was responsive, and exposed the expected `LVGL v9.5.0 - Widgets Demo` window title.
+- `lv_version.h` confirms version 9.5.0, and a second build reports `ninja: no work to do`.
+- `lv_conf.h` now contains all 1,526 lines of the official v9.5.0 template, with only the project-specific options enabled or adjusted.
+- The full configuration triggered 664 compile/link steps and rebuilt successfully.
+- The requested target resolution is exactly 320x240 landscape with Hardware on the left, Radio in the center, and GPS on the right; Radio and GPS need independent vertical scrolling.
+- The radio page needs mode-dependent channel-filter choices, numeric frequency entry with kHz/MHz units, a tune-result modal, volume control, and an 8-row signal table.
+- The hardware page needs battery voltage, software-settable amplifier state, amplifier mode, and 0-49 backlight control.
+- The GPS page needs GPS/log switches, SD/GPS state indicators, and a 14-row navigation table.
+- Relevant prior main-firmware context confirms LVGL is intentionally kept single-threaded and its whole task is pinned to Core 1; the GUI framework should therefore avoid internal worker/thread assumptions and keep hardware I/O behind callbacks.
+- The first runtime process was healthy and responsive, but GDI screen capture cannot read the accelerated SDL render surface in this session; visual QA requires `SDL_RenderReadPixels` rather than desktop capture.
+- Direct SDL renderer capture confirmed the Radio page hierarchy and palette render correctly at 320x240.
+- The complete config had LVGL sysmon enabled, causing FPS and heap overlays to cover the bottom of the product UI; it should be disabled for the polished radio interface.
+- Render captures for all three initial pages show correct hierarchy at 320x240: Hardware fits without visual overload, Radio leads with tuning, and GPS leads with health/status before its scrollable telemetry.
+- LVGL's configured formatted-print path does not render `%f`, so battery voltage must be formatted from integer millivolts rather than passed as a floating-point format argument.
+- The corrected Hardware capture shows `3.97 V` and all controls fit in one 320x240 viewport without scrolling or overlap.
+- The frequency overlay fills the display with a touch-friendly 3-column keypad, persistent input field, unit selector, and a wide bottom-row OK action; no clipping was observed.
+- Automated input remained responsive, but the initial result screenshot occurred too early to distinguish the final result modal from its transition; desktop capture delay must be controllable for deterministic interaction tests.
+- Windows `PostMessage` is not a reliable SDL/LVGL input test mechanism in this environment; the production-friendly solution is a public tune-result API that supports asynchronous SI4732 responses and is also directly render-testable.
+- Direct rendering of the public tune-result API passed: dimmed backdrop, semantic success title, wrapped result text, and a full-width OK target all fit at 320x240.
+- The finished framework exposes 19 public functions, and the focused header/source scan reports zero missing definitions.
+- The final executable is a PE x86-64 binary using only standard Windows system DLL imports.
+- Touch-keypad refinement shows the best 320x240 allocation is a 145 px 4-row numeric matrix, 27 px input, 29 px unit/action row, 12 px heading, and 3 px internal gaps.
+- A 232 px high, near-full-width result card with 10 px padding and 5 px row gaps displays the current eight-line SI4732 response completely at Montserrat 12.
+- Complete getter coverage requires live reads for interactive widgets and mirrored typed state for values such as battery voltage and SD/GPS status that cannot be reconstructed losslessly from formatted labels.
+- The RX and GPS tables now share a 14 px high-contrast, outlined table style with auto content height; direct SDL captures confirmed readable long GPS rows and complete bottom rows.
+- LVGL v9.5.0 chart support is enabled in the full configuration and provides line charts, 256-point series, independent X/Y ranges, and division lines; the existing 10/12/14/16 px fonts support a compact dual-chart page.
+- The page enum, tile creation, page selection, headers, CMake source list, demo population, and README all need coordinated updates for a fourth page.
+- LVGL chart division lines use the `LV_PART_MAIN` line descriptor, so the existing style API can directly provide dashed high-contrast grid lines without a canvas buffer or custom renderer.
+- Series lines use `LV_PART_ITEMS`; chart bullets can be disabled through `LV_PART_INDICATOR` dimensions to keep two dense 256-point traces legible in a compact viewport.
+- Meaningful time/frequency labels require scale metadata. The setters accept sample rate for the int8 time waveform and frequency span plus dB limits for int8 log-spectrum values; zero scale metadata falls back to sample/bin indices.
+- Direct 320x240 SDL rendering confirmed the waveform page fits without scrolling: both plot cards, page header, 3x5 dashed grids, three Y ticks, and three dynamic X ticks are fully visible with no overlap or clipping.
+- The demo frame displays an 8 kHz, 256-sample time trace over 31.9 ms and a 0-24 kHz log spectrum over -120..0 dB; cyan/amber series remain distinct against the dark grid.
+- Focused API parity found zero missing public definitions, and the coordinated source/README scan found no obsolete three-page labels after inserting the waveform tile.

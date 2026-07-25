@@ -104,20 +104,32 @@ endif()
 
 add_executable(CC3501_RaspberryRadio 
 ${CMAKE_CURRENT_LIST_DIR}/src/main/main.c
-
+${CMAKE_CURRENT_LIST_DIR}/src/APP/audio_fft/audio_fft.c
+${CMAKE_CURRENT_LIST_DIR}/src/APP/SD_card_log/SD_card_log.c
+${CMAKE_CURRENT_LIST_DIR}/src/APP/SD_card_log/sd_spi0.c
+${CMAKE_CURRENT_LIST_DIR}/src/APP/SD_card_log/diskio_sd_spi0.c
+${CMAKE_CURRENT_LIST_DIR}/src/FATFS/ff.c
+${CMAKE_CURRENT_LIST_DIR}/src/FATFS/ffunicode.c
 ${CMAKE_CURRENT_LIST_DIR}/src/peripheral/adc/RP2040_adc.c
 ${CMAKE_CURRENT_LIST_DIR}/src/peripheral/pwm/RP2040_pwm.c
 ${CMAKE_CURRENT_LIST_DIR}/src/peripheral/adc_dma_sampling/adc_dma_capture.c
 ${CMAKE_CURRENT_LIST_DIR}/src/peripheral/clock/RP2040_clk_init.c
-
+${CMAKE_CURRENT_LIST_DIR}/src/GUI/lv_port.c
+${CMAKE_CURRENT_LIST_DIR}/src/GUI/GUI_APP/GUI_hardware_link/GUI_hardware_link.c
+${CMAKE_CURRENT_LIST_DIR}/src/GUI/GUI_APP/radio_gui/radio_gui.c
+${CMAKE_CURRENT_LIST_DIR}/src/GUI/GUI_APP/radio_gui/radio_gui_hardware.c
+${CMAKE_CURRENT_LIST_DIR}/src/GUI/GUI_APP/radio_gui/radio_gui_radio.c
+${CMAKE_CURRENT_LIST_DIR}/src/GUI/GUI_APP/radio_gui/radio_gui_waveform.c
+${CMAKE_CURRENT_LIST_DIR}/src/GUI/GUI_APP/radio_gui/radio_gui_gps.c
 ${CMAKE_CURRENT_LIST_DIR}/src/driver/NS4160/NS4160.c
 ${CMAKE_CURRENT_LIST_DIR}/src/driver/CST816D/CST816D.c
 ${CMAKE_CURRENT_LIST_DIR}/src/driver/GPS_module/GPS_nmea_parser.c
 ${CMAKE_CURRENT_LIST_DIR}/src/driver/GPS_module/GPS_module.c
 ${CMAKE_CURRENT_LIST_DIR}/src/driver/SI4732/SI4732.c
 ${CMAKE_CURRENT_LIST_DIR}/src/driver/ST7789/ST7789_LCD.c
-
+${CMAKE_CURRENT_LIST_DIR}/src/FATFS
 ${CMAKE_CURRENT_LIST_DIR}/src/BSP/board_init.c
+${CMAKE_CURRENT_LIST_DIR}/src/OS/freertos_hooks.c
 
 
 )
@@ -164,13 +176,19 @@ target_link_libraries(CC3501_RaspberryRadio
 
 # Add the standard include files to the build
 target_include_directories(CC3501_RaspberryRadio PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/src/APP/audio_fft
+        ${CMAKE_CURRENT_LIST_DIR}/src/APP/signal_process
+        ${CMAKE_CURRENT_LIST_DIR}/src/APP/SD_card_log
         ${CMAKE_CURRENT_LIST_DIR}/src/peripheral/adc_dma_sampling
         ${CMAKE_CURRENT_LIST_DIR}/src/peripheral/clock
         ${CMAKE_CURRENT_LIST_DIR}/src/peripheral/pwm
         ${CMAKE_CURRENT_LIST_DIR}/src/peripheral/adc
         ${CMAKE_CURRENT_LIST_DIR}/src/OS
+        ${CMAKE_CURRENT_LIST_DIR}/src/FATFS
         ${CMAKE_CURRENT_LIST_DIR}/src/main
         ${CMAKE_CURRENT_LIST_DIR}/src/GUI
+        ${CMAKE_CURRENT_LIST_DIR}/src/GUI/GUI_APP/GUI_hardware_link
+        ${CMAKE_CURRENT_LIST_DIR}/src/GUI/GUI_APP/radio_gui
         ${CMAKE_CURRENT_LIST_DIR}/src/BSP
         ${CMAKE_CURRENT_LIST_DIR}/src/driver/GPS_module
         ${CMAKE_CURRENT_LIST_DIR}/src/driver/SI4732

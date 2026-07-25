@@ -1,0 +1,7 @@
+/build/
+/.vs/
+/.vscode/
+*.user
+*.swp
+/gui_*.bmp
+/gui_preview.png

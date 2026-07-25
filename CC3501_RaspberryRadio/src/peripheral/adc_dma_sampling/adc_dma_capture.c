@@ -1,5 +1,7 @@
 #include "adc_dma_capture.h"
 
+#include <stddef.h>
+
 #include "hardware/adc.h"
 #include "hardware/clocks.h"
 #include "hardware/dma.h"
@@ -34,23 +36,19 @@ static void adc_dma_capture_irq_handler(void)
     }
 }
 
-static void adc_dma_capture_init_once(void)
+void adc_dma_capture_init(void)
 {
-    static bool initialized;
-
-    if (initialized) {
-        return;
-    }
-
     adc_init();
-    adc_gpio_init(ADC_DMA_CAPTURE_DEFAULT_GPIO);
-    adc_select_input(ADC_DMA_CAPTURE_DEFAULT_ADC_INPUT);
+    adc_gpio_init(AUDIO_JACK_DETECT_PIN);
+    adc_select_input(AUDIO_JACK_DETECT_ADC_CH);
+
+    const uint32_t adc_clock_hz = clock_get_hz(clk_adc);
+    const float adc_clkdiv = ((float)adc_clock_hz / (float)ADC_DMA_CAPTURE_SAMPLE_RATE_HZ) - 1.0f;
+    adc_set_clkdiv(adc_clkdiv);
 
     adc_dma_channel = dma_claim_unused_channel(true);
     irq_set_exclusive_handler(DMA_IRQ_0, adc_dma_capture_irq_handler);
     irq_set_enabled(DMA_IRQ_0, true);
-
-    initialized = true;
 }
 
 bool adc_dma_capture_start_with_callback(adc_dma_capture_done_callback_t callback)
@@ -59,8 +57,6 @@ bool adc_dma_capture_start_with_callback(adc_dma_capture_done_callback_t callbac
         return false;
     }
 
-    adc_dma_capture_init_once();
-
     adc_dma_done_callback = callback;
     adc_dma_done = false;
     adc_dma_busy = true;
@@ -68,9 +64,7 @@ bool adc_dma_capture_start_with_callback(adc_dma_capture_done_callback_t callbac
     adc_run(false);
     adc_fifo_drain();
 
-    const uint32_t adc_clock_hz = clock_get_hz(clk_adc);
-    const float adc_clkdiv = ((float)adc_clock_hz / (float)ADC_DMA_CAPTURE_SAMPLE_RATE_HZ) - 1.0f;
-    adc_set_clkdiv(adc_clkdiv);
+    adc_select_input(AUDIO_JACK_DETECT_ADC_CH);
 
     adc_fifo_setup(
         true,

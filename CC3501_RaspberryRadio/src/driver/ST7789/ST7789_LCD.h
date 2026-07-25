@@ -1,43 +1,17 @@
 #ifndef _ST7789_LCD_H_
 #define _ST7789_LCD_H_
 
-/* Includes from PICO SDK */
+
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "board_pin_def.h"
-#include "pico/stdlib.h"
-#include "pico/divider.h"
-#include "hardware/spi.h"
-#include "hardware/i2c.h"
-#include "hardware/dma.h"
-#include "hardware/pio.h"
-#include "hardware/interp.h"
-#include "hardware/timer.h"
-#include "hardware/watchdog.h"
-#include "hardware/clocks.h"
-#include "hardware/pll.h"
-#include "hardware/uart.h"
 #include "hardware/gpio.h"
-#include "hardware/vreg.h"
-#include "hardware/pwm.h"
-
-/* Includes from C standard library */
-#include "math.h"
-#include "stdio.h"
-#include "string.h"
-#include "stdlib.h"
-#include "stdarg.h"
-
-/*Includes from user*/
-#include "main.h"
-#include "board_init.h"
-
-/*Includes from ARM CMSIS*/
-#include "arm_math.h"
-
 
 
 /* LCD commands pin definitions */
-#define ST7789_Write_RES(n)	 		(gpio_put(ST7789_RES_PIN,n))
-#define ST7789_Write_DC(n)		 	(gpio_put(ST7789_DC_PIN,n))
+#define ST7789_Write_RES(n)	 		(gpio_put(ST7789_RES_PIN,(n)))
+#define ST7789_Write_DC(n)		 	(gpio_put(ST7789_DC_PIN,(n)))
 //#define ST7789_Write_CS(n)		 	(HAL_GPIO_WritePin(SCREEN_CS_GPIO_Port,SCREEN_CS_Pin,n))
 // #define ST7789_Write_BLK(n)		 	(HAL_GPIO_WritePin(SCREEN_BLK_GPIO_Port,SCREEN_BLK_Pin,n))
 
@@ -57,10 +31,21 @@
 #define DRAW_OUT_OF_RANGE_BEHAVIOR   1 //0:block the dot on the edge of screen		1:abort the drawing process
 
 
-extern void ST7789_Init();//Initialize the LCD
-extern void ST7789_FillDot(uint16_t x,uint16_t y,uint16_t pPixel);//Fill a dot with a color
-extern void ST7789_FlushArea(uint16_t x0,uint16_t y0,uint16_t x1,uint16_t y1,uint16_t *pPixel);
+typedef void (*ST7789_FlushCompleteCallback)(void *context);
 
+void ST7789_Init();//Initialize the LCD
+bool ST7789_DMA_Init(void);
+void ST7789_FillDot(uint16_t x,uint16_t y,uint16_t pPixel);//Fill a dot with a color
+void ST7789_FlushArea(uint16_t x0,uint16_t y0,uint16_t x1,uint16_t y1,uint16_t *pPixel);
+bool ST7789_FlushAreaDMA(uint16_t x0,
+                         uint16_t y0,
+                         uint16_t x1,
+                         uint16_t y1,
+                         const uint16_t *pPixel,
+                         ST7789_FlushCompleteCallback complete_callback,
+                         void *callback_context);
+bool ST7789_IsFlushBusy(void);
+void ST7789_FillFullScreen(uint16_t Color);
 
 //画笔颜色
 #define RGB565_WHITE						0xFFFF // 0xFFFF -> 0xFFFF

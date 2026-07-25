@@ -1,0 +1,28 @@
+CMakeFiles/CC3501_RaspberryRadio.dir/src/APP/SD_card_log/diskio_sd_spi0.c.obj: \
+ C:\MCU_development\Raspberry_Pi\CC3501_group_prj\CC3501-Project-RF-Receiver\CC3501_RaspberryRadio\src\APP\SD_card_log\diskio_sd_spi0.c \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/lib/gcc/arm-none-eabi/14.2.1/include/stdbool.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/lib/gcc/arm-none-eabi/14.2.1/include/stddef.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/arm-none-eabi/include/stdio.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/arm-none-eabi/include/_ansi.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/arm-none-eabi/include/newlib.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/arm-none-eabi/include/_newlib_version.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/arm-none-eabi/include/sys/config.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/arm-none-eabi/include/machine/ieeefp.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/arm-none-eabi/include/sys/features.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/arm-none-eabi/include/sys/cdefs.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/arm-none-eabi/include/machine/_default_types.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/lib/gcc/arm-none-eabi/14.2.1/include/stdarg.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/arm-none-eabi/include/sys/reent.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/arm-none-eabi/include/_ansi.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/arm-none-eabi/include/sys/_types.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/arm-none-eabi/include/machine/_types.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/arm-none-eabi/include/sys/lock.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/arm-none-eabi/include/sys/stdio.h \
+ C:\MCU_development\Raspberry_Pi\CC3501_group_prj\CC3501-Project-RF-Receiver\CC3501_RaspberryRadio\src\FATFS/ff.h \
+ C:\MCU_development\Raspberry_Pi\CC3501_group_prj\CC3501-Project-RF-Receiver\CC3501_RaspberryRadio\src\FATFS/ffconf.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/lib/gcc/arm-none-eabi/14.2.1/include/stdint.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/arm-none-eabi/include/stdint.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/arm-none-eabi/include/sys/_intsup.h \
+ C:/Users/MRHELI~1/PICO-S~1/TOOLCH~1/14_2_R~1/arm-none-eabi/include/sys/_stdint.h \
+ C:\MCU_development\Raspberry_Pi\CC3501_group_prj\CC3501-Project-RF-Receiver\CC3501_RaspberryRadio\src\FATFS/diskio.h \
+ C:\MCU_development\Raspberry_Pi\CC3501_group_prj\CC3501-Project-RF-Receiver\CC3501_RaspberryRadio\src\APP\SD_card_log\sd_spi0.h

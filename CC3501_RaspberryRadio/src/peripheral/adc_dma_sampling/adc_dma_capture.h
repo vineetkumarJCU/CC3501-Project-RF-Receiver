@@ -2,18 +2,13 @@
 #define ADC_DMA_CAPTURE_H
 
 #include <stdbool.h>
-#include <stddef.h>
 #include <stdint.h>
+
 #include "board_pin_def.h"
+#include "hardware/dma.h"
 
-/* The audio ADC input is the board's GPIO26 / ADC0 input. */
-#define MICROPHONE_GPIO_PIN BATTERY_MONITOR_PIN
-#define MICROPHONE_ADC_INPUT_PIN (MICROPHONE_GPIO_PIN - 26u)
-
-#define ADC_DMA_CAPTURE_SAMPLE_COUNT 1024U
-#define ADC_DMA_CAPTURE_SAMPLE_RATE_HZ 44100U
-#define ADC_DMA_CAPTURE_DEFAULT_ADC_INPUT MICROPHONE_ADC_INPUT_PIN
-#define ADC_DMA_CAPTURE_DEFAULT_GPIO MICROPHONE_GPIO_PIN
+#define ADC_DMA_CAPTURE_SAMPLE_COUNT 256U
+#define ADC_DMA_CAPTURE_SAMPLE_RATE_HZ 16000U
 
 #ifndef ADC_DMA_CAPTURE_RESOLUTION_BITS
 #define ADC_DMA_CAPTURE_RESOLUTION_BITS 8u
@@ -41,6 +36,7 @@ typedef uint16_t adc_dma_capture_sample_t;
 
 typedef void (*adc_dma_capture_done_callback_t)(void);
 
+void adc_dma_capture_init(void);
 bool adc_dma_capture_start_with_callback(adc_dma_capture_done_callback_t callback);
 bool adc_dma_capture_is_busy(void);
 bool adc_dma_capture_is_done(void);

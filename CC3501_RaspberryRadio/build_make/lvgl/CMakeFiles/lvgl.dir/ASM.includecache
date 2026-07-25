@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/MCU_development/Raspberry_Pi/CC3501_group_prj/CC3501-Project-RF-Receiver/CC3501_RaspberryRadio/src/GUI/lv_conf.h
+my_include.h
+C:/MCU_development/Raspberry_Pi/CC3501_group_prj/CC3501-Project-RF-Receiver/CC3501_RaspberryRadio/src/GUI/my_include.h
+
+C:/MCU_development/Raspberry_Pi/CC3501_group_prj/CC3501-Project-RF-Receiver/CC3501_RaspberryRadio/src/GUI/lvgl/lv_version.h
+
+C:/MCU_development/Raspberry_Pi/CC3501_group_prj/CC3501-Project-RF-Receiver/CC3501_RaspberryRadio/src/GUI/lvgl/src/draw/sw/blend/helium/lv_blend_helium.S
+Pre_Include_Global.h
+C:/MCU_development/Raspberry_Pi/CC3501_group_prj/CC3501-Project-RF-Receiver/CC3501_RaspberryRadio/src/GUI/lvgl/src/draw/sw/blend/helium/Pre_Include_Global.h
+RTE_Components.h
+C:/MCU_development/Raspberry_Pi/CC3501_group_prj/CC3501-Project-RF-Receiver/CC3501_RaspberryRadio/src/GUI/lvgl/src/draw/sw/blend/helium/RTE_Components.h
+../../../../lv_conf_internal.h
+C:/MCU_development/Raspberry_Pi/CC3501_group_prj/CC3501-Project-RF-Receiver/CC3501_RaspberryRadio/src/GUI/lvgl/src/lv_conf_internal.h
+
+C:/MCU_development/Raspberry_Pi/CC3501_group_prj/CC3501-Project-RF-Receiver/CC3501_RaspberryRadio/src/GUI/lvgl/src/lv_conf_internal.h
+lv_conf_kconfig.h
+C:/MCU_development/Raspberry_Pi/CC3501_group_prj/CC3501-Project-RF-Receiver/CC3501_RaspberryRadio/src/GUI/lvgl/src/lv_conf_kconfig.h
+lv_conf.h
+C:/MCU_development/Raspberry_Pi/CC3501_group_prj/CC3501-Project-RF-Receiver/CC3501_RaspberryRadio/src/GUI/lvgl/src/lv_conf.h
+../../lv_conf.h
+C:/MCU_development/Raspberry_Pi/CC3501_group_prj/CC3501-Project-RF-Receiver/CC3501_RaspberryRadio/src/GUI/lv_conf.h
+my_include.h
+C:/MCU_development/Raspberry_Pi/CC3501_group_prj/CC3501-Project-RF-Receiver/CC3501_RaspberryRadio/src/GUI/lvgl/src/my_include.h
+
+C:/MCU_development/Raspberry_Pi/CC3501_group_prj/CC3501-Project-RF-Receiver/CC3501_RaspberryRadio/src/GUI/lvgl/src/lv_conf_kconfig.h
+sdkconfig.h
+C:/MCU_development/Raspberry_Pi/CC3501_group_prj/CC3501-Project-RF-Receiver/CC3501_RaspberryRadio/src/GUI/lvgl/src/sdkconfig.h
+esp_attr.h
+C:/MCU_development/Raspberry_Pi/CC3501_group_prj/CC3501-Project-RF-Receiver/CC3501_RaspberryRadio/src/GUI/lvgl/src/esp_attr.h
+nuttx/config.h
+-
+../lv_version.h
+C:/MCU_development/Raspberry_Pi/CC3501_group_prj/CC3501-Project-RF-Receiver/CC3501_RaspberryRadio/src/GUI/lvgl/lv_version.h
+lv_rt_thread_conf.h
+-
+
