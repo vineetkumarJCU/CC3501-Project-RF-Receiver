@@ -25,16 +25,19 @@ endif()
 # ====================================================================================
 set(PICO_BOARD none CACHE STRING "Board type")
 
-
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
 
 project(CC3501_RaspberryRadio C CXX ASM)
 
+set(CMAKE_C_FLAGS_RELEASE "-g -Ofast -DNDEBUG" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS_RELEASE "-g -Ofast -DNDEBUG" CACHE STRING "" FORCE)
+
 # The board uses a Winbond W25Q16. Use its Quad I/O XIP boot2 rather than
 # the generic 0x03-read boot2, which is limited to a much lower read clock.
 set(PICO_DEFAULT_BOOT_STAGE2 boot2_w25q080 CACHE STRING
         "Winbond W25Q Quad I/O boot stage 2" FORCE)
+  
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
@@ -85,7 +88,6 @@ set(CONFIG_LV_BUILD_EXAMPLES OFF CACHE BOOL "Do not build LVGL examples" FORCE)
 set(CONFIG_LV_USE_THORVG_INTERNAL OFF CACHE BOOL "Build internal ThorVG" FORCE)
 
 add_subdirectory(src/GUI/lvgl lvgl)
-
 # target_compile_options(lvgl_demos PRIVATE -ffunction-sections -fdata-sections)
 
 target_compile_options(lvgl PRIVATE
@@ -103,40 +105,37 @@ endif()
 # Add executable. Default name is the project name, version 0.1
 
 add_executable(CC3501_RaspberryRadio 
-${CMAKE_CURRENT_LIST_DIR}/src/main/main.c
-${CMAKE_CURRENT_LIST_DIR}/src/APP/audio_fft/audio_fft.c
-${CMAKE_CURRENT_LIST_DIR}/src/APP/SD_card_log/SD_card_log.c
-${CMAKE_CURRENT_LIST_DIR}/src/APP/SD_card_log/sd_spi0.c
-${CMAKE_CURRENT_LIST_DIR}/src/APP/SD_card_log/diskio_sd_spi0.c
-${CMAKE_CURRENT_LIST_DIR}/src/FATFS/ff.c
-${CMAKE_CURRENT_LIST_DIR}/src/FATFS/ffunicode.c
-${CMAKE_CURRENT_LIST_DIR}/src/peripheral/adc/RP2040_adc.c
-${CMAKE_CURRENT_LIST_DIR}/src/peripheral/pwm/RP2040_pwm.c
-${CMAKE_CURRENT_LIST_DIR}/src/peripheral/adc_dma_sampling/adc_dma_capture.c
-${CMAKE_CURRENT_LIST_DIR}/src/peripheral/clock/RP2040_clk_init.c
-${CMAKE_CURRENT_LIST_DIR}/src/GUI/lv_port.c
-${CMAKE_CURRENT_LIST_DIR}/src/GUI/GUI_APP/GUI_hardware_link/GUI_hardware_link.c
-${CMAKE_CURRENT_LIST_DIR}/src/GUI/GUI_APP/radio_gui/radio_gui.c
-${CMAKE_CURRENT_LIST_DIR}/src/GUI/GUI_APP/radio_gui/radio_gui_hardware.c
-${CMAKE_CURRENT_LIST_DIR}/src/GUI/GUI_APP/radio_gui/radio_gui_radio.c
-${CMAKE_CURRENT_LIST_DIR}/src/GUI/GUI_APP/radio_gui/radio_gui_waveform.c
-${CMAKE_CURRENT_LIST_DIR}/src/GUI/GUI_APP/radio_gui/radio_gui_gps.c
-${CMAKE_CURRENT_LIST_DIR}/src/driver/NS4160/NS4160.c
-${CMAKE_CURRENT_LIST_DIR}/src/driver/CST816D/CST816D.c
-${CMAKE_CURRENT_LIST_DIR}/src/driver/GPS_module/GPS_nmea_parser.c
-${CMAKE_CURRENT_LIST_DIR}/src/driver/GPS_module/GPS_module.c
-${CMAKE_CURRENT_LIST_DIR}/src/driver/SI4732/SI4732.c
-${CMAKE_CURRENT_LIST_DIR}/src/driver/ST7789/ST7789_LCD.c
-${CMAKE_CURRENT_LIST_DIR}/src/FATFS
-${CMAKE_CURRENT_LIST_DIR}/src/BSP/board_init.c
-${CMAKE_CURRENT_LIST_DIR}/src/OS/freertos_hooks.c
-
-
-)
+                src/main/main.c
+                src/driver/CST816D/CST816D.c
+                src/driver/GPS_module/GPS_module.c
+                src/driver/GPS_module/GPS_nmea_parser.c
+                src/driver/SI4732/SI4732.c
+                src/driver/ST7789/ST7789_LCD.c
+                src/driver/NS4160/NS4160.c
+                src/APP/audio_fft/audio_fft.c
+                src/APP/signal_process/signal_process.c
+                src/APP/SD_card_log/SD_card_log.c
+                src/APP/SD_card_log/sd_spi0.c
+                src/APP/SD_card_log/diskio_sd_spi0.c
+                src/FATFS/ff.c
+                src/FATFS/ffunicode.c
+                src/GUI/lv_port.c
+                src/GUI/GUI_APP/GUI_hardware_link/GUI_hardware_link.c
+                src/GUI/GUI_APP/radio_gui/radio_gui.c
+                src/GUI/GUI_APP/radio_gui/radio_gui_hardware.c
+                src/GUI/GUI_APP/radio_gui/radio_gui_radio.c
+                src/GUI/GUI_APP/radio_gui/radio_gui_waveform.c
+                src/GUI/GUI_APP/radio_gui/radio_gui_gps.c
+                src/BSP/board_init.c
+                src/OS/freertos_hooks.c
+                src/peripheral/adc_dma_sampling/adc_dma_capture.c
+                src/peripheral/clock/RP2040_clk_init.c
+                src/peripheral/pwm/RP2040_pwm.c
+                src/peripheral/adc/RP2040_adc.c
+                )
 
 pico_set_program_name(CC3501_RaspberryRadio "CC3501_RaspberryRadio")
-pico_set_program_version(CC3501_RaspberryRadio "0.1")
-
+pico_set_program_version(CC3501_RaspberryRadio "1.0")
 
 # Modify the below lines to enable/disable output over UART/USB
 # Route Pico SDK standard I/O through UART0 on GPIO28/GPIO29.
@@ -147,9 +146,8 @@ target_compile_definitions(CC3501_RaspberryRadio PRIVATE
         PICO_DEFAULT_UART_BAUD_RATE=2000000
 )
 
-# Modify the below lines to enable/disable output over UART/USB
 pico_enable_stdio_uart(CC3501_RaspberryRadio 1)
-pico_enable_stdio_usb(CC3501_RaspberryRadio 1)
+pico_enable_stdio_usb(CC3501_RaspberryRadio 0)
 
 # Add the standard library to the build
 target_link_libraries(CC3501_RaspberryRadio
@@ -174,27 +172,30 @@ target_link_libraries(CC3501_RaspberryRadio
         hardware_irq
         )
 
+
 # Add the standard include files to the build
 target_include_directories(CC3501_RaspberryRadio PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}
         ${CMAKE_CURRENT_LIST_DIR}/src/APP/audio_fft
         ${CMAKE_CURRENT_LIST_DIR}/src/APP/signal_process
         ${CMAKE_CURRENT_LIST_DIR}/src/APP/SD_card_log
-        ${CMAKE_CURRENT_LIST_DIR}/src/peripheral/adc_dma_sampling
-        ${CMAKE_CURRENT_LIST_DIR}/src/peripheral/clock
-        ${CMAKE_CURRENT_LIST_DIR}/src/peripheral/pwm
-        ${CMAKE_CURRENT_LIST_DIR}/src/peripheral/adc
-        ${CMAKE_CURRENT_LIST_DIR}/src/OS
         ${CMAKE_CURRENT_LIST_DIR}/src/FATFS
-        ${CMAKE_CURRENT_LIST_DIR}/src/main
-        ${CMAKE_CURRENT_LIST_DIR}/src/GUI
-        ${CMAKE_CURRENT_LIST_DIR}/src/GUI/GUI_APP/GUI_hardware_link
-        ${CMAKE_CURRENT_LIST_DIR}/src/GUI/GUI_APP/radio_gui
         ${CMAKE_CURRENT_LIST_DIR}/src/BSP
+        ${CMAKE_CURRENT_LIST_DIR}/src/driver/CST816D
         ${CMAKE_CURRENT_LIST_DIR}/src/driver/GPS_module
         ${CMAKE_CURRENT_LIST_DIR}/src/driver/SI4732
         ${CMAKE_CURRENT_LIST_DIR}/src/driver/ST7789
         ${CMAKE_CURRENT_LIST_DIR}/src/driver/NS4160
         ${CMAKE_CURRENT_LIST_DIR}/src/driver/CST816D
+        ${CMAKE_CURRENT_LIST_DIR}/src/GUI
+        ${CMAKE_CURRENT_LIST_DIR}/src/GUI/GUI_APP/GUI_hardware_link
+        ${CMAKE_CURRENT_LIST_DIR}/src/GUI/GUI_APP/radio_gui
+        ${CMAKE_CURRENT_LIST_DIR}/src/main
+        ${CMAKE_CURRENT_LIST_DIR}/src/OS
+        ${CMAKE_CURRENT_LIST_DIR}/src/peripheral/adc_dma_sampling
+        ${CMAKE_CURRENT_LIST_DIR}/src/peripheral/clock
+        ${CMAKE_CURRENT_LIST_DIR}/src/peripheral/pwm
+        ${CMAKE_CURRENT_LIST_DIR}/src/peripheral/adc
 )
 
 pico_add_extra_outputs(CC3501_RaspberryRadio)

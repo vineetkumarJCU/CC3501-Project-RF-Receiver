@@ -30,6 +30,8 @@ typedef struct
 {
   bool valid;
   sd_card_log_radio_band_t band;
+  uint32_t receive_frequency_hz;
+  bool receive_frequency_valid;
   bool afcrl;
   bool station_valid;
   bool pilot;
