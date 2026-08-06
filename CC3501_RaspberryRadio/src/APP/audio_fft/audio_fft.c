@@ -17,6 +17,8 @@
 #define AUDIO_FFT_FIXED_MAGNITUDE_FRACTION_BITS 8U
 #endif
 
+// Fixed-point logarithm base 10 for 20*log10(x) in Q12 format
+
 _Static_assert(AUDIO_FFT_LENGTH == 256U,
                "hann_win_l256_sfix8_half requires a 256-point FFT");
 _Static_assert((sizeof(hann_win_l256_sfix8_half) /
@@ -25,6 +27,8 @@ _Static_assert((sizeof(hann_win_l256_sfix8_half) /
 
 static audio_fft_instance_t audio_fft_s;
 
+// Compute the FFT of the loaded time-domain samples and store the results in the instance structure
+
 #if AUDIO_FFT_DATA_FORMAT == AUDIO_FFT_DATA_FORMAT_INT8
 /* CMSIS-DSP has no Q7 real FFT, so INT8 storage is promoted to Q15 for FFT. */
 static q15_t int8_rfft_input[AUDIO_FFT_LENGTH];
@@ -32,6 +36,7 @@ static q15_t int8_rfft_output[AUDIO_FFT_Q15_OUTPUT_LENGTH];
 static q15_t int8_magnitude[AUDIO_FFT_BIN_COUNT];
 #endif
 
+// Apply the Hann window to the time-domain samples and prepare them for FFT processing
 #if AUDIO_FFT_DATA_FORMAT == AUDIO_FFT_DATA_FORMAT_Q15
 static q15_t saturate_q15(int32_t value)
 {
@@ -44,6 +49,7 @@ static q15_t saturate_q15(int32_t value)
 
 #endif
 
+// Load the ADC DMA captured samples into the FFT instance structure, centering them around zero and converting to the appropriate format
 #if AUDIO_FFT_DATA_FORMAT == AUDIO_FFT_DATA_FORMAT_INT8
 static int8_t saturate_int8(int32_t value)
 {
@@ -54,6 +60,8 @@ static int8_t saturate_int8(int32_t value)
   return (int8_t)value;
 }
 #endif
+
+// Load the time-domain samples into the FFT instance structure without any conversion or centering
 
 int audio_fft_load_samples(const adc_dma_capture_sample_t *src_data_buffer)
 {
@@ -80,6 +88,8 @@ int audio_fft_load_samples(const adc_dma_capture_sample_t *src_data_buffer)
   return 0;
 }
 
+// Load the time-domain samples into the FFT instance structure without any conversion or centering
+
 int audio_fft_load_time_domain(const audio_fft_data_t *src_data_buffer)
 {
   if (src_data_buffer == NULL)
@@ -92,6 +102,8 @@ int audio_fft_load_time_domain(const audio_fft_data_t *src_data_buffer)
 
   return 0;
 }
+
+// Get the Hann window value for a given sample index in Q8 format
 
 static uint8_t audio_fft_get_hann_q8(size_t sample_index)
 {
@@ -124,6 +136,7 @@ static void audio_fft_prepare_fft_input(void)
   }
 }
 
+// Compute the FFT of the loaded time-domain samples and store the results in the instance structure
 #if AUDIO_FFT_DATA_FORMAT == AUDIO_FFT_DATA_FORMAT_Q15
 static void audio_fft_compute_q15_results(void)
 {
@@ -149,6 +162,8 @@ static void audio_fft_compute_q15_results(void)
 }
 #endif
 
+// Compute the FFT of the loaded time-domain samples and store the results in the instance structure
+
 #if AUDIO_FFT_DATA_FORMAT == AUDIO_FFT_DATA_FORMAT_INT8
 static void audio_fft_compute_int8_results(void)
 {
@@ -165,6 +180,7 @@ static void audio_fft_compute_int8_results(void)
     audio_fft_s.amplitude_buffer[bin] = saturate_int8(int8_magnitude[bin] >> 8);
   }
 
+  // Compute the phase for each frequency bin if enabled
 #if AUDIO_FFT_CALCULATE_PHASE != 0
   audio_fft_s.phase_buffer[0] = 0;
   audio_fft_s.phase_buffer[AUDIO_FFT_LENGTH / 2] = 0;
@@ -183,6 +199,7 @@ static void audio_fft_compute_int8_results(void)
 }
 #endif
 
+// Compute the FFT of the loaded time-domain samples and store the results in the instance structure
 #if AUDIO_FFT_DATA_FORMAT == AUDIO_FFT_DATA_FORMAT_FLOAT32
 static void audio_fft_compute_float32_results(void)
 {
@@ -214,6 +231,8 @@ static void audio_fft_compute_float32_results(void)
 }
 #endif
 
+// Find the frequency bin with the maximum magnitude and store its index and corresponding frequency in the instance structure
+
 static void find_mag_peak(void)
 {
   uint16_t peak_index = 0;
@@ -230,6 +249,8 @@ static void find_mag_peak(void)
   audio_fft_s.mag_peak_freq_Hz =
       (float32_t)peak_index * AUDIO_FFT_BIN_FREQUENCY_RESOLUTION_HZ;
 }
+
+// Get the fixed-point magnitude of a given frequency bin, scaled to a Q format suitable for logarithmic conversion
 
 static uint32_t audio_fft_get_fixed_magnitude(size_t bin)
 {
@@ -274,6 +295,7 @@ static uint32_t audio_fft_get_fixed_magnitude(size_t bin)
 #endif
 }
 
+// Compute the logarithmic magnitude in decibels for each frequency bin and store it in the provided destination buffer, applying a floor value to avoid negative infinity
 static uint32_t audio_fft_interpolate_magnitude(uint32_t lower,
                                                 uint32_t upper,
                                                 uint32_t numerator,
@@ -296,6 +318,8 @@ static uint32_t audio_fft_interpolate_magnitude(uint32_t lower,
 
   return upper > lower ? lower + offset : lower - offset;
 }
+
+// Compute the logarithmic magnitude in decibels for each frequency bin and store it in the provided destination buffer, applying a floor value to avoid negative infinity
 
 int audio_fft_get_log_magnitude_db(int8_t *dst_buffer,
                                    size_t dst_length,
@@ -374,6 +398,8 @@ int audio_fft_get_log_magnitude_db(int8_t *dst_buffer,
 
   return 0;
 }
+
+// Compute the FFT of the loaded time-domain samples and store the results in the instance structure
 
 int audio_fft_compute(void)
 {
