@@ -13,7 +13,11 @@
 #include <stdio.h>
 #include <string.h>
 
+// GPS module state and configuration
+
 #define GPS_FRAME_IDLE_TIME_US 150000ULL
+
+// Internal state variables for GPS module
 
 static gps_nmea_parser_t gps_parser;
 static gps_info_t latest_gps_info;
@@ -35,6 +39,7 @@ static void gps_pps_irq_callback(uint gpio, uint32_t events)
   }
 }
 
+// Publish a completed GPS frame to the latest info structure
 static void publish_frame(gps_info_t *gps_info)
 {
   uint32_t interrupt_state;
@@ -56,6 +61,8 @@ static void publish_frame(gps_info_t *gps_info)
   latest_info_available = true;
   critical_section_exit(&latest_info_lock);
 }
+
+// Initialize the GPS module and its internal state
 
 void GPS_module_init(void)
 {
@@ -80,6 +87,8 @@ void GPS_module_init(void)
   module_initialized = true;
 }
 
+// Process incoming GPS data and update the latest info structure if a complete frame is received
+
 bool GPS_module_process(void)
 {
   static gps_info_t completed_frame;
@@ -87,6 +96,7 @@ bool GPS_module_process(void)
   bool published = false;
   uint64_t now;
 
+  // Ensure the GPS module is initialized before processing data
   if(!module_initialized) GPS_module_init();
 
   if(parser_power_state != module_powered) {
@@ -107,6 +117,7 @@ bool GPS_module_process(void)
     }
   }
 
+  // If no bytes were received and the parser has been idle for a sufficient time, finalize the current frame if available
   now = time_us_64();
   if(!received_byte && last_uart_byte_time_us != 0U &&
      (now - last_uart_byte_time_us) >= GPS_FRAME_IDLE_TIME_US &&
@@ -117,6 +128,8 @@ bool GPS_module_process(void)
   }
   return published;
 }
+
+// Retrieve the latest GPS information if available
 
 bool GPS_module_get_latest_info(gps_info_t *gps_info)
 {
@@ -129,6 +142,8 @@ bool GPS_module_get_latest_info(gps_info_t *gps_info)
   critical_section_exit(&latest_info_lock);
   return available;
 }
+
+// Log the GPS information to the console for debugging and monitoring purposes
 
 static const char *gps_bool_text(bool value)
 {
@@ -155,6 +170,8 @@ static const char *gps_constellation_text(gps_constellation_t constellation)
   }
 }
 
+// Log the GPS information to the console for debugging and monitoring purposes
+
 static const char *gps_antenna_status_text(gps_antenna_status_t status)
 {
   switch(status) {
@@ -165,6 +182,8 @@ static const char *gps_antenna_status_text(gps_antenna_status_t status)
     default: return "UNKNOWN";
   }
 }
+
+// Log the GPS information to the console for debugging and monitoring purposes
 
 static void gps_log_time(const char *section, const gps_utc_time_t *time)
 {
@@ -177,6 +196,8 @@ static void gps_log_time(const char *section, const gps_utc_time_t *time)
          (unsigned)time->millisecond);
 }
 
+// Log the GPS information to the console for debugging and monitoring purposes
+
 static void gps_log_date(const char *section, const gps_utc_date_t *date)
 {
   printf("[GPS][%s][DATE] valid=%s date=%04u-%02u-%02u\n",
@@ -186,6 +207,8 @@ static void gps_log_date(const char *section, const gps_utc_date_t *date)
          (unsigned)date->month,
          (unsigned)date->day);
 }
+
+// Log the GPS information to the console for debugging and monitoring purposes
 
 static void gps_log_position(const char *section, const gps_position_t *position)
 {
@@ -198,12 +221,15 @@ static void gps_log_position(const char *section, const gps_position_t *position
          gps_log_char(position->longitude_hemisphere));
 }
 
+// Log the GPS information to the console for debugging and monitoring purposes
+
 void GPS_module_log_all_info(const gps_info_t *gps_info)
 {
   uint8_t count;
 
   if(gps_info == NULL) return;
 
+  // Log the summary information of the GPS frame, including frame number, state, satellite counts, and PPS information
   printf("\n[GPS] ==================== FRAME %lu ====================\n",
          (unsigned long)gps_info->frame_number);
   printf("[GPS][SUMMARY] frame=%lu state=%s satellites=%u/%u checksum_errors=%u PPS=%lu\n",
@@ -287,6 +313,8 @@ void GPS_module_log_all_info(const gps_info_t *gps_info)
   gps_log_position("GLL", &gps_info->gll.position);
   gps_log_time("GLL", &gps_info->gll.utc_time);
 
+  // Log the GSA records, including selection mode, fix type, constellation, system ID, satellite PRNs, and dilution of precision values
+
   count = gps_info->gsa_count < GPS_MAX_GSA_RECORDS ? gps_info->gsa_count : GPS_MAX_GSA_RECORDS;
   printf("[GPS][GSA] record_count=%u\n", (unsigned)gps_info->gsa_count);
   for(uint8_t i = 0U; i < count; i++) {
@@ -317,6 +345,8 @@ void GPS_module_log_all_info(const gps_info_t *gps_info)
     }
   }
 
+  // Log the GSV groups, including talker ID, constellation, total messages, received message mask, satellites in view, and signal ID information
+
   count = gps_info->gsv_group_count < GPS_MAX_GSV_GROUPS ?
           gps_info->gsv_group_count : GPS_MAX_GSV_GROUPS;
   printf("[GPS][GSV] group_count=%u\n", (unsigned)gps_info->gsv_group_count);
@@ -333,6 +363,8 @@ void GPS_module_log_all_info(const gps_info_t *gps_info)
            gps_bool_text(group->has_signal_id),
            (unsigned)group->signal_id);
   }
+
+  // Log the satellite information, including constellation, PRN, usage in fix, elevation, azimuth, SNR, and signal ID
 
   count = gps_info->satellite_count < GPS_MAX_SATELLITES ?
           gps_info->satellite_count : GPS_MAX_SATELLITES;
@@ -353,6 +385,8 @@ void GPS_module_log_all_info(const gps_info_t *gps_info)
            gps_bool_text(satellite->has_signal_id),
            (unsigned)satellite->signal_id);
   }
+
+  // Log the RMC information, including presence, data status, mode, navigation status, UTC time and date, position, speed, course, and magnetic variation
 
   printf("[GPS][RMC] present=%s data_status=%c mode=%c navigation_status=%c\n",
          gps_bool_text(gps_info->rmc.present),
@@ -407,6 +441,7 @@ void GPS_module_log_all_info(const gps_info_t *gps_info)
          (unsigned long)gps_info->frame_number);
 }
 
+// Power up the GPS module by setting the appropriate GPIO pin and updating the internal state
 void GPS_module_powerup(void)
 {
   gpio_put(GPS_POWER_UP_PIN, 0);
