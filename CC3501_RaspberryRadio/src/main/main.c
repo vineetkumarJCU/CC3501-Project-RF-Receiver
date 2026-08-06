@@ -27,6 +27,7 @@
 #include "signal_process.h"
 
 ////////////////////////////////////////////////////////////////
+// Task configuration
 
 #define LVGL_TASK_STACK_WORDS 2048u
 #define LVGL_TASK_PRIORITY (tskIDLE_PRIORITY + 4U)
@@ -41,6 +42,8 @@
 #define SAMPLE_RX_SIGNAL_TASK_PRIORITY (tskIDLE_PRIORITY + 3U)
 
 #define WAVEFORM_QUEUE_LENGTH 1U
+
+// Data structures for waveform processing and queueing
 
 typedef signal_process_result_t waveform_queue_item_t;
 
@@ -60,6 +63,8 @@ static void lvgl_task(void *parameters)
   lv_init();
   lv_port_init();
 
+  // Create the GUI and link it to the hardware
+
   radio_gui_config_t gui_config = radio_gui_link_hardware_config();
   radio_gui_t *gui = radio_gui_create(lv_screen_active(), &gui_config);
   if (gui == NULL)
@@ -69,6 +74,7 @@ static void lvgl_task(void *parameters)
   printf("GUI created\n");
   radio_gui_startup_hardware(gui);
 
+  // Initialize the SD card logging module
   TickType_t last_rsq_update = xTaskGetTickCount();
   TickType_t last_battery_update = xTaskGetTickCount();
   TickType_t last_waveform_update = xTaskGetTickCount();
@@ -76,6 +82,7 @@ static void lvgl_task(void *parameters)
   uint32_t displayed_gps_frame = 0U;
   bool gps_page_was_active = false;
 
+  // Main loop: update GUI and handle periodic tasks
   for (;;)
   {
     TickType_t now = xTaskGetTickCount();
@@ -83,7 +90,7 @@ static void lvgl_task(void *parameters)
     bool gps_page_is_active = current_page == RADIO_GUI_PAGE_GPS;
 
     radio_gui_apply_sd_logging_state(gui);
-
+  // Update the GPS page active semaphore based on whether the GPS page is currently active
     if (gps_page_is_active != gps_page_was_active)
     {
       if (gps_page_is_active)
@@ -97,12 +104,17 @@ static void lvgl_task(void *parameters)
       gps_page_was_active = gps_page_is_active;
     }
 
+    // Periodically sample the SI4732 RSQ information and update the GUI if the radio page is active
+
     if ((now - last_rsq_update) >= pdMS_TO_TICKS(500))
     {
       last_rsq_update = now;
       radio_gui_sample_si4732_rsq_info(gui,
                                        current_page == RADIO_GUI_PAGE_RADIO);
     }
+
+
+    // Periodically update the battery voltage on the hardware page
 
     if (current_page == RADIO_GUI_PAGE_HARDWARE)
     {
@@ -116,6 +128,9 @@ static void lvgl_task(void *parameters)
         }
       }
     }
+
+    // Periodically sample the ADC and update the waveform on the waveform page
+
     else if (current_page == RADIO_GUI_PAGE_WAVEFORM)
     {
       if ((now - last_waveform_update) >= pdMS_TO_TICKS(20))
@@ -138,6 +153,7 @@ static void lvgl_task(void *parameters)
     }
     else if (current_page == RADIO_GUI_PAGE_GPS)
     {
+      // Periodically update the GPS information on the GPS page if it is active
       if ((now - last_gps_update) >= pdMS_TO_TICKS(100))
       {
         static gps_info_t gps_info;
@@ -160,6 +176,8 @@ static void lvgl_task(void *parameters)
   }
 }
 
+// Task to handle GPS processing and logging
+
 static void gps_task(void *parameters)
 {
   (void)parameters;
@@ -180,6 +198,8 @@ static void gps_task(void *parameters)
     vTaskDelay(pdMS_TO_TICKS(2));
   }
 }
+
+// Task to handle SD card logging and GUI updates
 
 static void sd_card_report_state_if_changed(sd_card_log_state_t *last_state,
                                             bool *last_card_inserted)
@@ -207,6 +227,8 @@ static void sd_card_report_state_if_changed(sd_card_log_state_t *last_state,
     gui_status = RADIO_GUI_SD_OK;
   }
 
+  // Log the SD card state and update the GUI with the current status
+
   printf("[SD TASK] State=%s, card=%s, logging=%s\n",
          sd_card_log_state_string(state),
          card_inserted ? "inserted" : "not inserted",
@@ -216,12 +238,17 @@ static void sd_card_report_state_if_changed(sd_card_log_state_t *last_state,
   *last_card_inserted = card_inserted;
 }
 
+// Task to handle SD card logging and GUI updates
+
 static void sd_card_task(void *parameters)
 {
   static gps_info_t gps_info;
   static sd_card_log_rsq_info_t rsq_info;
   sd_card_log_state_t last_state = (sd_card_log_state_t)-1;
   bool last_card_inserted = !sd_card_log_card_is_inserted();
+
+
+  // Task to handle SD card logging and GUI updates
 
   (void)parameters;
   printf("[SD TASK] Started on Core 0\n");
@@ -251,6 +278,8 @@ static void sd_card_task(void *parameters)
       }
     }
 
+    // Periodically check if it's time to record a new entry in the SD card log
+
     if (sd_card_log_record_due())
     {
       const gps_info_t *gps_snapshot =
@@ -268,6 +297,8 @@ static void sd_card_task(void *parameters)
     vTaskDelay(pdMS_TO_TICKS(50));
   }
 }
+
+// Task to handle sampling the received signal and processing it for waveform display
 
 static void sample_rx_signal_task(void *parameters)
 {
@@ -309,6 +340,8 @@ static void sample_rx_signal_task(void *parameters)
     xQueueOverwrite(waveform_queue, &waveform_item);
   }
 }
+
+// Main entry point of the program
 
 int main(void)
 {
