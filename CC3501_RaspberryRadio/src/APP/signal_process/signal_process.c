@@ -5,6 +5,8 @@
 
 #include "audio_fft.h"
 
+// Ensure that the audio FFT data format is INT8, as required by the signal processing module
+
 #if AUDIO_FFT_DATA_FORMAT != AUDIO_FFT_DATA_FORMAT_INT8
 #error "signal_process requires AUDIO_FFT_DATA_FORMAT_INT8"
 #endif
@@ -19,12 +21,16 @@ static int8_t saturate_int8(int32_t value)
     return (int8_t)value;
 } 
 
+// Fill the spectrum buffer with a specified value, used for error handling when FFT computation fails
+
 static void fill_spectrum(int8_t *spectrum, int8_t value)
 {
     for (size_t i = 0; i < SIGNAL_PROCESS_SAMPLE_COUNT; i++) {
         spectrum[i] = value;
     }
 }
+
+// Run the signal processing pipeline: center the ADC samples, compute the FFT, and obtain the logarithmic magnitude spectrum
 
 int signal_process_run(const adc_dma_capture_sample_t *adc_samples,
                        int8_t spectrum_floor_db,
